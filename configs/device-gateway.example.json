@@ -1,0 +1,17 @@
+{
+  "devices": [
+    {
+      "serial": "R58M12345678",
+      "name": "QQ-01",
+      "region": "桌面",
+      "image": "Android 13"
+    },
+    {
+      "serial": "R58M12345679",
+      "address": "192.168.1.50:5555",
+      "name": "QQ-02",
+      "region": "无线",
+      "image": "Android 14"
+    }
+  ]
+}

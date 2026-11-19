@@ -1,0 +1,6 @@
+{
+  "name": "cloud-phone",
+  "identifier": "com.example.cloudphone",
+  "version": "0.1.0",
+  "out": "build"
+}

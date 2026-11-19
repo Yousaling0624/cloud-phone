@@ -1,0 +1,33 @@
+package main
+
+import (
+	"context"
+	"testing"
+
+	"cloud-phone/internal/app"
+	"cloud-phone/internal/driver"
+	"cloud-phone/internal/service"
+	"cloud-phone/internal/store"
+
+	"github.com/egoist/mygo/ui"
+)
+
+// TestAppViewSmoke builds the real App over an in-memory store and renders
+// one frame headlessly, checking the shell draws without a window.
+func TestAppViewSmoke(t *testing.T) {
+	repo, err := store.OpenMemory()
+	if err != nil {
+		t.Fatalf("open memory: %v", err)
+	}
+	defer repo.Close()
+	if err := repo.Seed(context.Background()); err != nil {
+		t.Fatalf("seed: %v", err)
+	}
+	sms := driver.MockSms{}
+	svc := service.New(repo, driver.MockPhone{}, sms, driver.MockLogin{Sms: sms, FailRate: 0})
+	a := app.New(svc)
+	tt := ui.NewTester(a.View, 1280, 800)
+	if !tt.HasText("账号") {
+		t.Fatalf("expected account column; texts %q", tt.Texts())
+	}
+}

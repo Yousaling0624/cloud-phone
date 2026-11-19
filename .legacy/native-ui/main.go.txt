@@ -1,0 +1,58 @@
+package main
+
+import (
+	"context"
+	"log"
+	"os"
+	"path/filepath"
+
+	"cloud-phone/internal/app"
+	"cloud-phone/internal/driver"
+	"cloud-phone/internal/service"
+	"cloud-phone/internal/store"
+
+	"github.com/egoist/mygo"
+	"github.com/egoist/mygo/ui"
+)
+
+func main() {
+	mygo.App.WhenReady(func() {
+		// The user-data directory must exist before sqlite opens a file in it.
+		if dir, err := mygo.App.Path(mygo.PathUserData); err == nil {
+			if err := os.MkdirAll(dir, 0o755); err != nil {
+				log.Printf("create user-data dir: %v", err)
+			}
+		}
+		dbPath := store.DefaultPath()
+		if err := os.MkdirAll(filepath.Dir(dbPath), 0o755); err != nil {
+			log.Printf("create db dir: %v", err)
+		}
+		repo, err := store.Open(dbPath)
+		if err != nil {
+			log.Fatal(err)
+		}
+		if err := repo.Seed(context.Background()); err != nil {
+			log.Fatal(err)
+		}
+
+		// The drivers are mocks that run the whole product end to end; a
+		// real provider replaces them by implementing the same interfaces.
+		sms := driver.MockSms{}
+		svc := service.New(repo, driver.MockPhone{}, sms, driver.MockLogin{Sms: sms, FailRate: 0.2})
+
+		a := app.New(svc)
+		win := mygo.NewWindow(mygo.WindowOptions{
+			Title:     "存号网络 - 云手机运营平台",
+			Width:     1280,
+			Height:    800,
+			MinWidth:  1024,
+			MinHeight: 640,
+			StateKey:  "main",
+			Content:   ui.View(a.View),
+		})
+		a.SetWindow(win)
+	})
+	if err := mygo.App.Run(); err != nil {
+		log.Fatal(err)
+	}
+}

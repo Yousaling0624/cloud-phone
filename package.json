@@ -1,0 +1,31 @@
+{
+  "name": "cloud-phone",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "go tool mygo dev",
+    "build": "go tool mygo build",
+    "generate": "go tool mygo generate",
+    "dev:web": "vite",
+    "build:web": "tsc --noEmit && vite build",
+    "build:server": "mkdir -p build && go build -o build/cloud-phone-server ./cmd/server",
+    "build:provider": "mkdir -p build && go build -o build/cloud-phone-provider ./cmd/provider",
+    "build:gateway": "mkdir -p build && go build -o build/cloud-phone-device-gateway ./cmd/device-gateway",
+    "build:gateway:windows-arm64": "mkdir -p build/windows-arm64 && CGO_ENABLED=0 GOOS=windows GOARCH=arm64 go build -o build/windows-arm64/cloud-phone-device-gateway.exe ./cmd/device-gateway",
+    "build:windows-arm64": "go tool mygo build -platform windows/arm64",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "mygo-runtime": "^0.8.3",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "mygo-cli": "^0.8.3",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.8"
+  }
+}

@@ -1,0 +1,11 @@
+/build/
+/.mygo/
+mygo_windows_*.syso
+/userData/
+/.shots/
+*.db
+*.db-*
+
+# Frontend dependencies and the built page (`mygo build` embeds it).
+/node_modules/
+/dist/
